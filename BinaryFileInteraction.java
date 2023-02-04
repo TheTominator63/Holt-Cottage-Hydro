@@ -95,10 +95,10 @@ public class BinaryFileInteraction
     public void getRecordData(int recordLength)
     {
         String recordData = "";
-        int catalogLength = 0;
-        int catalogOffset = 0;
-        int catalogLabel = 0;
-        int headerAndCatalogLength = 0;
+        int catalogueLength = 0;
+        int catalogueOffset = 0;
+        int catalogueLabel = 0;
+        int headerAndCatalogueLength = 0;
         String transferringChars;
         for (int i = 0 + lengthTraversed; i < recordLength; i++)
         {
@@ -109,14 +109,14 @@ public class BinaryFileInteraction
                 transferringChars += String.valueOf(fileData.get(i + 2));
                 transferringChars += String.valueOf(fileData.get(i + 3));
                 transferringChars += String.valueOf(fileData.get(i + 4));
-                headerAndCatalogLength = Integer.valueOf(transferringChars);
+                headerAndCatalogueLength = Integer.valueOf(transferringChars);
             } else if (i - lengthTraversed == 20) {
                 transferringChars = String.valueOf(fileData.get(i));
-                catalogLength = Integer.valueOf(transferringChars);
+                catalogueLength = Integer.valueOf(transferringChars);
                 transferringChars = String.valueOf(fileData.get(i + 1));
-                catalogOffset = Integer.valueOf(transferringChars);
+                catalogueOffset = Integer.valueOf(transferringChars);
                 transferringChars = String.valueOf(fileData.get(i + 3));
-                catalogLabel = Integer.valueOf(transferringChars);
+                catalogueLabel = Integer.valueOf(transferringChars);
             }
             System.out.println(recordData.length());
         }
@@ -126,7 +126,7 @@ public class BinaryFileInteraction
         lengthTraversed += recordLength;
 
         // process this record...
-        aRecord rec = new aRecord(catalogLength, catalogOffset, catalogLabel, headerAndCatalogLength);
+        aRecord rec = new aRecord(catalogueLength, catalogueOffset, catalogueLabel, headerAndCatalogueLength);
         rec.setReclen(recordLength);
         rec.setRecordData(recordData);
         // setup record entries....
@@ -138,6 +138,7 @@ public class BinaryFileInteraction
         // set the information from the leader
         // - done in the constructor
         // get the catalogue entries
+        rec.getCatalogueData();
 
         allrecords.add(rec);
     }
