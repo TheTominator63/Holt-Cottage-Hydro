@@ -98,6 +98,7 @@ public class BinaryFileInteraction
         int catalogLength = 0;
         int catalogOffset = 0;
         int catalogLabel = 0;
+        int headerAndCatalogLength = 0;
         String transferringChars;
         for (int i = 0 + lengthTraversed; i < recordLength; i++)
         {
@@ -108,7 +109,7 @@ public class BinaryFileInteraction
                 transferringChars += String.valueOf(fileData.get(i + 2));
                 transferringChars += String.valueOf(fileData.get(i + 3));
                 transferringChars += String.valueOf(fileData.get(i + 4));
-                int HeaderAndCatalogLength = Integer.valueOf(transferringChars);
+                headerAndCatalogLength = Integer.valueOf(transferringChars);
             } else if (i - lengthTraversed == 20) {
                 transferringChars = String.valueOf(fileData.get(i));
                 catalogLength = Integer.valueOf(transferringChars);
@@ -125,10 +126,9 @@ public class BinaryFileInteraction
         lengthTraversed += recordLength;
 
         // process this record...
-        aRecord rec = new aRecord(catalogLength, catalogOffset, catalogLabel);
+        aRecord rec = new aRecord(catalogLength, catalogOffset, catalogLabel, headerAndCatalogLength);
         rec.setReclen(recordLength);
         rec.setRecordData(recordData);
-        rec.getCatalogEntriesNum();
         // setup record entries....
 
         // set the bytes
