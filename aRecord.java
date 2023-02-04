@@ -25,7 +25,7 @@ public class aRecord
     int reclen = 0;
     ArrayList<Byte> bytes = new ArrayList<>();
 
-    public aRecord(int length, int offset, int label, int HeaderAndCatalog)
+    public aRecord(int length, int offset, int label, int HeaderAndCatalogue)
     {
         this.reclen = 0;
         this.bytes.clear();
@@ -33,7 +33,7 @@ public class aRecord
         this.fieldWidthOffset = offset;
         this.fieldWidthLabel = label;
         this.sizeOfEntry = length + offset + label;
-        this.sizeOfHeaderAndCatalog = HeaderAndCatalog;
+        this.sizeOfHeaderAndCatalogue = HeaderAndCatalogue;
     }
 
     private int dataOffset;
@@ -100,23 +100,23 @@ public class aRecord
     private int fieldWidthOffset;
     private int fieldWidthLength;
     private int sizeOfEntry;
-    private int sizeOfHeaderAndCatalog;
+    private int sizeOfHeaderAndCatalogue;
 
     private ArrayList<CatalogueEntry> catalogue = new ArrayList<>();
-    //Function to get the total number of catalog entries.
-    // It gets the size of an individual entry, then divides it by the length of the catalog
-//    public int getCatalogEntriesNum() {
+    //Function to get the total number of catalogue entries.
+    // It gets the size of an individual entry, then divides it by the length of the catalogue
+//    public int getCatalogueEntriesNum() {
 //        String lengthFromString = "";
-//        int lengthOfCatalog = 0;
+//        int lengthOfCatalogue = 0;
 //        for (int i = 12; i < 17; i++) {
 //            lengthFromString += String.valueOf(getRecordData().charAt(i));
 //        }
-//        lengthOfCatalog = Integer.valueOf(lengthFromString);
-//        return lengthOfCatalog - 24/sizeOfEntry;
+//        lengthOfCatalogue = Integer.valueOf(lengthFromString);
+//        return lengthOfCatalogue - 24/sizeOfEntry;
 //    }
 
     public void getCatalogueData() {
-        for (int i = 24; i < sizeOfHeaderAndCatalog - 24; i += (sizeOfHeaderAndCatalog - 24)/sizeOfEntry) {
+        for (int i = 24; i < sizeOfHeaderAndCatalogue - 24; i += (sizeOfHeaderAndCatalogue - 24)/sizeOfEntry) {
            System.out.println("not finished");
         }
     }
