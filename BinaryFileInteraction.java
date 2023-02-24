@@ -14,7 +14,8 @@ public class BinaryFileInteraction
     private ArrayList<String> recordsData = new ArrayList<>();
     private ArrayList<Integer> recordlengths = new ArrayList<>();
 
-    public ArrayList<aRecord> getAllrecords() {
+    public ArrayList<aRecord> getAllrecords()
+    {
         return allrecords;
     }
 
@@ -32,7 +33,8 @@ public class BinaryFileInteraction
         return filename;
     }
 
-    public ArrayList<Character> getFileData() {
+    public ArrayList<Character> getFileData()
+    {
         return fileData;
     }
 
@@ -40,7 +42,8 @@ public class BinaryFileInteraction
         return recordsData;
     }
 
-    public int getLengthTraversed() {
+    public int getLengthTraversed()
+    {
         return lengthTraversed;
     }
 
@@ -100,10 +103,11 @@ public class BinaryFileInteraction
         int catalogueLabel = 0;
         int headerAndCatalogueLength = 0;
         String transferringChars;
-        for (int i = 0 + lengthTraversed; i < recordLength; i++)
+        for (int i = 0 + lengthTraversed; i < lengthTraversed+recordLength; i++)
         {
             recordData = recordData + (fileData.get(i).toString());
-            if (i - lengthTraversed == 12) {
+            if (i - lengthTraversed == 12)
+            {
                 transferringChars = String.valueOf(fileData.get(i));
                 transferringChars += String.valueOf(fileData.get(i + 1));
                 transferringChars += String.valueOf(fileData.get(i + 2));
@@ -118,7 +122,7 @@ public class BinaryFileInteraction
                 transferringChars = String.valueOf(fileData.get(i + 3));
                 catalogueLabel = Integer.valueOf(transferringChars);
             }
-            System.out.println(recordData.length());
+            //System.out.println(recordData.length());
         }
         recordsData.add(recordData);
         System.out.println(recordData.length());

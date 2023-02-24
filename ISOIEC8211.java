@@ -17,15 +17,33 @@ public class ISOIEC8211
 
             while (binaryFile1.getFileData().size() != binaryFile1.getLengthTraversed())
             {
-                try {
+                try
+                {
                     binaryFile1.getRecordData(binaryFile1.getRecordLength(binaryFile1.getLengthTraversed()));
-                } catch (StringIndexOutOfBoundsException e) {
+                }
+                catch (StringIndexOutOfBoundsException e)
+                {
                     System.out.println("It's all finished");
                 }
                 //Test Statement below
                 //System.out.println(binaryFile1.getLengthTraversed());
             }
-            System.out.println(binaryFile1.getAllrecords());
+
+
+//            for (int i =0;i<binaryFile1.getAllrecords().size();i++)
+//            {
+//                aRecord a = binaryFile1.getAllrecords().get(i);
+//                System.out.println(a);
+//            }
+//
+
+            int sz=0;
+            for (aRecord a:binaryFile1.getAllrecords())
+            {
+                sz+=a.getReclen(); // sz = sz + a.getReclen();
+                System.out.println(a);
+            }
+            System.out.println("total size=" + sz);
 
 
 
