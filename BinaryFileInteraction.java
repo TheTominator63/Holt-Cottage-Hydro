@@ -1,160 +1,81 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-/**
- * Main object.
- */
-public class BinaryFileInteraction
-{
+public class BinaryFileInteraction {
     private String filename = "filename.000";
-    private ArrayList<Character> fileData = new ArrayList<>();
-    private ArrayList<String> recordsData = new ArrayList<>();
-    private ArrayList<Integer> recordlengths = new ArrayList<>();
+    private byte[] allTheBytes;
+    private String fileData;
+    private ArrayList<aRecord> alltheRecords = new ArrayList<>();
 
-    public ArrayList<aRecord> getAllrecords()
-    {
-        return allrecords;
+    public String getFileData() {
+        return fileData;
     }
 
-    private ArrayList<aRecord> allrecords = new ArrayList<>();
+    public void setFileData(String fileData) {
+        this.fileData = fileData;
+    }
 
+    public ArrayList<aRecord> getAlltheRecords() {
+        return alltheRecords;
+    }
 
-    public void addRecordLength(int i)
-    {
-        recordlengths.add(i);
+    public void setAlltheRecords(ArrayList<aRecord> alltheRecords) {
+        this.alltheRecords = alltheRecords;
+    }
+
+    public int getLengthTraversed() {
+        return lengthTraversed;
+    }
+
+    public void setLengthTraversed(int lengthTraversed) {
+        this.lengthTraversed = lengthTraversed;
     }
 
     private int lengthTraversed = 0;
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public ArrayList<Character> getFileData()
-    {
-        return fileData;
-    }
-
-    public ArrayList<String> getRecordsData() {
-        return recordsData;
-    }
-
-    public int getLengthTraversed()
-    {
-        return lengthTraversed;
-    }
-
-
-
-    /**
-     * constructor
-     * @param fname - external file to open.
-     */
-    public BinaryFileInteraction(String fname) throws FileNotFoundException,IOException
-    {
-
-        //TODO: maybe use File to byte [] to speed things up....
+    public BinaryFileInteraction(String fname) throws FileNotFoundException, IOException {
+        //Gets filename from main class and puts the file's data into a byte array
         filename = fname;
-        File file = new File((filename));
+        File file = new File(filename);
         FileInputStream fileInputStream = new FileInputStream(file);
-
-        int charIsInt;
-        char charToStore;
-        while ((charIsInt = fileInputStream.read()) != -1)
-        {
-            charToStore = (char) charIsInt;
-            fileData.add(charToStore);
-        }
+        allTheBytes = new byte[(int)file.length()];
+        fileInputStream.read(allTheBytes);
         fileInputStream.close();
-        //return(fileData);
+        //Converts raw bytes into a string of characters
+        fileData = new String(allTheBytes, StandardCharsets.UTF_8);
     }
 
-    public int getRecordLength(int start)
-    {
-
-        // check that start+5 not greater than fileData...?
-
+    public int getRecordLength(int start) {
+        //Returns the first 5 characters of the start point specified, used to get the length of the record from its leader
         String recordLengthString = "";
-        for (int i = 0 + start; i < 5 + start; i++)
-        {
-            recordLengthString += (fileData.get(i)).toString();
-        }
+        if (start + 5 < fileData.length()) {
+            for (int i = 0 + start; i < 5 + start; i++) {
+                recordLengthString += fileData.charAt(i);
+            }
 
-        try
-        {
-            int recordLength = Integer.valueOf(recordLengthString);
-            return recordLength;
-        }
-        catch (NumberFormatException ee)
-        {
-            System.out.println("Ouch, that's not a number");
+            try {
+                int recordLength = Integer.valueOf(recordLengthString);
+                return recordLength;
+            } catch (NumberFormatException ee) {
+                System.out.println("Ouch, that's not a number");
+                return -1;
+            }
+        } else {
+            System.out.println("File is too short");
             return -1;
         }
     }
 
-    public void getRecordData(int recordLength)
-    {
-        String recordData = "";
-        int catalogueLength = 0;
-        int catalogueOffset = 0;
-        int catalogueLabel = 0;
-        int headerAndCatalogueLength = 0;
-        String transferringChars;
-        for (int i = 0 + lengthTraversed; i < lengthTraversed+recordLength; i++)
-        {
-            recordData = recordData + (fileData.get(i).toString());
-            if (i - lengthTraversed == 12)
-            {
-                transferringChars = String.valueOf(fileData.get(i));
-                transferringChars += String.valueOf(fileData.get(i + 1));
-                transferringChars += String.valueOf(fileData.get(i + 2));
-                transferringChars += String.valueOf(fileData.get(i + 3));
-                transferringChars += String.valueOf(fileData.get(i + 4));
-                headerAndCatalogueLength = Integer.valueOf(transferringChars);
-            } else if (i - lengthTraversed == 20) {
-                transferringChars = String.valueOf(fileData.get(i));
-                catalogueLength = Integer.valueOf(transferringChars);
-                transferringChars = String.valueOf(fileData.get(i + 1));
-                catalogueOffset = Integer.valueOf(transferringChars);
-                transferringChars = String.valueOf(fileData.get(i + 3));
-                catalogueLabel = Integer.valueOf(transferringChars);
-            }
-            //System.out.println(recordData.length());
-        }
-        recordsData.add(recordData);
-        System.out.println(recordData.length());
-        recordlengths.add(recordLength);
+    public void getRecordsFromString(int recordLength) {
+        //TODO- get catalog info in aRecord constructor
+        String recordData = fileData.substring(lengthTraversed, recordLength + lengthTraversed);
+        aRecord rec = new aRecord(recordLength, recordData);
+        alltheRecords.add(rec);
         lengthTraversed += recordLength;
-
-        // process this record...
-        aRecord rec = new aRecord(catalogueLength, catalogueOffset, catalogueLabel, headerAndCatalogueLength);
-        rec.setReclen(recordLength);
-        rec.setRecordData(recordData);
-        // setup record entries....
-
-        // set the bytes
-        ArrayList<Byte> thebytes = new ArrayList<>();
-        rec.setBytes(thebytes);
-
-        // set the information from the leader
-        // - done in the constructor
-        // get the catalogue entries
-        rec.getCatalogueData();
-
-        allrecords.add(rec);
     }
-
-    // Testing code just to check if the program works, not required now.
-//    public void printRecordLength() {
-//        String recordLength = "";
-//        int recordIndex = 0;
-//        for (recordIndex=0; recordIndex < 5; recordIndex++) {
-//            recordLength.concat(String.valueOf(fileData.get(recordIndex)));
-//        }
-//        System.out.println(recordLength);
-//    }
 
 }

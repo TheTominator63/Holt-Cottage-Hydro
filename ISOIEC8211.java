@@ -1,67 +1,24 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
-public class ISOIEC8211
-{
-    public static void main(String[] args)
-    {
+public class ISOIEC8211 {
+    public static void main(String[] args) {
         System.out.println("Hello world!");
-//        BinaryFileInteraction binaryFile1 = new BinaryFileInteraction("US4CN22M.000");
-
-        try
-        {
-            BinaryFileInteraction binaryFile1 = new BinaryFileInteraction("US4CN22M.000");
-            System.out.println(binaryFile1.getRecordLength(0));
-
-
-            while (binaryFile1.getFileData().size() != binaryFile1.getLengthTraversed())
-            {
-                try
-                {
-                    binaryFile1.getRecordData(binaryFile1.getRecordLength(binaryFile1.getLengthTraversed()));
-                }
-                catch (StringIndexOutOfBoundsException e)
-                {
+        String filename = "dat/US4CN22M.000";
+        try {
+            BinaryFileInteraction binaryFile1 = new BinaryFileInteraction(filename);
+            while (binaryFile1.getFileData().length() != binaryFile1.getLengthTraversed()) {
+                try {
+                    binaryFile1.getRecordsFromString(binaryFile1.getRecordLength(binaryFile1.getLengthTraversed()));
+                } catch (StringIndexOutOfBoundsException e) {
                     System.out.println("It's all finished");
+                    break;
                 }
-                //Test Statement below
-                //System.out.println(binaryFile1.getLengthTraversed());
             }
-
-
-//            for (int i =0;i<binaryFile1.getAllrecords().size();i++)
-//            {
-//                aRecord a = binaryFile1.getAllrecords().get(i);
-//                System.out.println(a);
-//            }
-//
-
-            int sz=0;
-            for (aRecord a:binaryFile1.getAllrecords())
-            {
-                sz+=a.getReclen(); // sz = sz + a.getReclen();
-                System.out.println(a);
-            }
-            System.out.println("total size=" + sz);
-
-
-
-//        for (int i = 0; i < binaryFile1.getRecords().size(); i++)
-//        {
-//            System.out.println(binaryFile1.getRecords().get(i));
-//        }
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
-
     }
 }
