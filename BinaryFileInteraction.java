@@ -10,6 +10,7 @@ public class BinaryFileInteraction {
     private byte[] allTheBytes;
     private String fileData;
     private ArrayList<aRecord> alltheRecords = new ArrayList<>();
+    public byte[] recordbuffer;
 
     public String getFileData() {
         return fileData;
@@ -45,22 +46,42 @@ public class BinaryFileInteraction {
         allTheBytes = new byte[(int)file.length()];
         fileInputStream.read(allTheBytes);
         fileInputStream.close();
+
         //Converts raw bytes into a string of characters
         fileData = new String(allTheBytes, StandardCharsets.UTF_8);
+        System.out.println("length allthebyytes=" + allTheBytes.length + " lengthstring=" + fileData.length());
+//        for (int i=0;i<allTheBytes.length;i++)
+//        {
+//            byte x = allTheBytes[i];
+//            String s2 = fileData.substring(i,i+1);
+//            byte []b = s2.getBytes();
+//            if (b.length>1)
+//            {
+//                System.out.println("Er...");
+//            }
+//            System.out.println("i=" + i + " b=" + allTheBytes[i] + " s=" + fileData.substring(i,i+1));
+//        }
     }
 
-    public int getRecordLength(int start) {
+    public int getRecordLength(int start)
+    {
         //Returns the first 5 characters of the start point specified, used to get the length of the record from its leader
         String recordLengthString = "";
-        if (start + 5 < fileData.length()) {
-            for (int i = 0 + start; i < 5 + start; i++) {
-                recordLengthString += fileData.charAt(i);
+        if (start + 5 < allTheBytes.length)
+        {
+            for (int i = 0 + start; i < 5 + start; i++)
+            {
+                byte x = allTheBytes[i];
+                recordLengthString += (char) allTheBytes[i];
             }
 
-            try {
+            try
+            {
                 int recordLength = Integer.valueOf(recordLengthString);
                 return recordLength;
-            } catch (NumberFormatException ee) {
+            }
+            catch (NumberFormatException ee)
+            {
                 System.out.println("Ouch, that's not a number");
                 return -1;
             }
@@ -70,11 +91,20 @@ public class BinaryFileInteraction {
         }
     }
 
-    public void getRecordsFromString(int recordLength) {
+    public void getRecordsFromString(int recordLength)
+    {
+        //Test Statement
+        //System.out.println("RECLEN=" + recordLength + " LengthTraversed=" + lengthTraversed);
         //TODO- get catalog info in aRecord constructor
+        recordbuffer = new byte[recordLength];
+        System.arraycopy(allTheBytes,lengthTraversed, recordbuffer,0, recordLength);
+
         String recordData = fileData.substring(lengthTraversed, recordLength + lengthTraversed);
-        aRecord rec = new aRecord(recordLength, recordData);
-        alltheRecords.add(rec);
+
+        //aRecord rec = new aRecord(recordLength, recordData);
+        aRecord rec2 = new aRecord(recordLength, recordbuffer);
+
+        alltheRecords.add(rec2);
         lengthTraversed += recordLength;
     }
 
