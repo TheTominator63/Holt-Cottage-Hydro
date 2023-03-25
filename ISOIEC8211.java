@@ -1,10 +1,31 @@
+import java.sql.ResultSet;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ISOIEC8211 {
     public static void main(String[] args) {
+        //database access blueprint
+        //dbC db = new dbC("localhost","hch","postgres","postgresql","5432");
+
+        //db.do_sql_nr("insert into catalogues(catalogue_id, catalogue_length) values(0, 16)");
+
+        //ResultSet r = db.do_sql("select * from catalogues");
+        //try
+        //{
+        //    while (r.next())
+        //    {
+        //        int id = r.getInt("catalogue_id");
+        //        int msg = r.getInt("catalogue_length");
+        //        System.out.println("id=" + id + " length=" + msg);
+        //    }
+        //}
+        //catch (Exception e)
+        //{
+        //    e.printStackTrace();
+        //}
+
         System.out.println("Hello world!");
-        String filename = "dat/US4ME30M.000";
+        String filename = "dat/US5IN10M.000";
         try {
             BinaryFileInteraction binaryFile1 = new BinaryFileInteraction(filename);
             while (binaryFile1.getFileData().length() != binaryFile1.getLengthTraversed())
@@ -18,6 +39,7 @@ public class ISOIEC8211 {
                 catch (StringIndexOutOfBoundsException e)
                 {
                     System.out.println("It's all finished");
+                    binaryFile1.uploadToDb();
                     break;
                 }
             }

@@ -3,6 +3,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class aRecord {
+    public int getRecordLength() {
+        return recordLength;
+    }
+
+    public String getRecordData() {
+        return recordData;
+    }
+
+    public ArrayList<CatalogueEntry> getCatalogue() {
+        return catalogue;
+    }
+
     private int recordLength;
     private String recordData;
     private byte[] recbytes;
@@ -26,6 +38,7 @@ public class aRecord {
         recbytes = buffer;
         byte[] lenBuffer = new byte[5];
         byte[] infoBuffer = new byte[4];
+        recordData = new String(recbytes, StandardCharsets.UTF_8);
 
         // all the caatalogue stuff goes here.... :)
         //
