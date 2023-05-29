@@ -73,7 +73,7 @@ public class BinaryFileInteraction {
             for (int i = 0 + start; i < 5 + start; i++)
             {
                 byte x = allTheBytes[i];
-                recordLengthString += (char) allTheBytes[i];
+            recordLengthString += (char) allTheBytes[i];
             }
 
             try
@@ -96,7 +96,6 @@ public class BinaryFileInteraction {
     {
         //Test Statement
         //System.out.println("RECLEN=" + recordLength + " LengthTraversed=" + lengthTraversed);
-        //TODO- get catalog info in aRecord constructor
         recordbuffer = new byte[recordLength];
         System.arraycopy(allTheBytes,lengthTraversed, recordbuffer,0, recordLength);
 
@@ -111,9 +110,9 @@ public class BinaryFileInteraction {
     public void uploadToDb() {
         String recId;
         String catId;
-        String entryId;
         String recLength;
         String catLength;
+        int entryId = 0;
         String entryLength;
         String entryOffset;
         String entryLabel;
@@ -127,31 +126,35 @@ public class BinaryFileInteraction {
             recId = Integer.toString(i);
             catId = Integer.toString(i);
             aRecord record = alltheRecords.get(i);
+            String recData = record.getRecordData();
             recLength = Integer.toString(record.getRecordLength());
             catLength = Integer.toString(record.getCatalogue().size());
-            db.do_sql_nr("insert into records(record_id, record_length) values("+ recId + ", " + recLength + ")");
+            db.do_sql_nr("insert into records(record_id, record_length, catalogue_id, record_data) values("+ recId + ", " + recLength + ", " + catId + ", \'" + "recData" + "\')");
             //String[] lengths = new String[record.getCatalogue().size()];
             //String[] offsets = new String[record.getCatalogue().size()];
             //String[] labels  = new String[record.getCatalogue().size()];
-            String lengths = "{";
-            String offsets = "{";
-            String labels = "{";
+            String lengths = "'{";
+            String offsets = "'{";
+            String labels  = "'{";
 
             for (int catI = 0; catI < record.getCatalogue().size(); catI++) {
                 CatalogueEntry entry = record.getCatalogue().get(catI);
-                //lengths[catI] = Integer.toString(entry.getLength());
-                //offsets[catI] = Integer.toString(entry.getOffset());
-                //labels [catI] = "'" + entry.getLabel() + "'";
                 lengths += Integer.toString(entry.getLength()) + ", ";
-                offsets += Integer.toString(entry.getLength()) + ", ";
-                labels += "'" + entry.getLabel() + "'" + ", ";
+                offsets += Integer.toString(entry.getOffset()) + ", ";
+                labels += "\"" + entry.getLabel() + "\"" + ", ";
+                entryLength = Integer.toString(entry.getLength());
+                entryOffset = Integer.toString(entry.getOffset());
+                entryLabel = entry.getLabel();
+                db.do_sql_nr("insert into catalogue_entries(entry_id, catalogue_id, entry_length, entry_offset, entry_label) values("+ entryId + ", " + catId + ", " + entryLength + ", " + entryOffset + ", \'" + entryLabel + "\')");
+                entryId += 1;
+
             }
             lengths = lengths.substring(0, lengths.length() - 2);
             offsets = offsets.substring(0, offsets.length() - 2);
             labels = labels.substring(0, labels.length() - 2);
-            lengths += "}";
-            offsets += "}";
-            labels  += "}";
+            lengths += "}'";
+            offsets += "}'";
+            labels  += "}'";
 
 
 
