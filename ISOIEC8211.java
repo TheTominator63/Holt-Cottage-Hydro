@@ -25,7 +25,7 @@ public class ISOIEC8211 {
         //}
 
         System.out.println("Hello world!");
-        String filename = "dat/US4CN22M.000";
+        String filename = "dat/US4ME30M.000";
         try {
             BinaryFileInteraction binaryFile1 = new BinaryFileInteraction(filename);
             while (binaryFile1.getFileData().length() != binaryFile1.getLengthTraversed())
@@ -40,6 +40,7 @@ public class ISOIEC8211 {
                 {
                     System.out.println("It's all finished");
                     binaryFile1.uploadToDb();
+                    binaryFile1.printCatalogueTotals();
                     break;
                 }
             }
