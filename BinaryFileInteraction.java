@@ -116,12 +116,23 @@ public class BinaryFileInteraction {
         String entryLength;
         String entryOffset;
         String entryLabel;
+        String dataProducer;
+        String usageBand;
+        ArrayList<String[]> catalogueEntries = new ArrayList<String[]>();
         int entryCount = 0;
+        if (filename.indexOf("dat/") == -1) {
+            dataProducer = filename.substring(0,2);
+            usageBand = filename.substring(2,3);
+        } else {
+            dataProducer = filename.substring(4,6);
+            usageBand = filename.substring(6,7);
+        }
+
 
         dbC db = new dbC("localhost","hch","postgres","postgresql","5432");
-        db.do_sql_nr("delete from records where record_id >= 0");
-        db.do_sql_nr("delete from catalogues where catalogue_id >= 0");
         db.do_sql_nr("delete from catalogue_entries where entry_id >= 0");
+        db.do_sql_nr("delete from catalogues where catalogue_id >= 0");
+        db.do_sql_nr("delete from records where record_id >= 0");
         for (int i = 0; i < alltheRecords.size(); i++) {
             recId = Integer.toString(i);
             catId = Integer.toString(i);
@@ -129,7 +140,7 @@ public class BinaryFileInteraction {
             String recData = record.getRecordData();
             recLength = Integer.toString(record.getRecordLength());
             catLength = Integer.toString(record.getCatalogue().size());
-            db.do_sql_nr("insert into records(record_id, record_length, catalogue_id, record_data) values("+ recId + ", " + recLength + ", " + catId + ", \'" + "recData" + "\')");
+            db.do_sql_nr("insert into records(record_id, record_length, catalogue_id, record_data, data_producer, usage_band) values("+ recId + ", " + recLength + ", " + catId + ", \'" + "recData" + "\', \'" + dataProducer + "\', " + usageBand + ")");
             //String[] lengths = new String[record.getCatalogue().size()];
             //String[] offsets = new String[record.getCatalogue().size()];
             //String[] labels  = new String[record.getCatalogue().size()];
@@ -138,15 +149,14 @@ public class BinaryFileInteraction {
             String labels  = "'{";
 
             for (int catI = 0; catI < record.getCatalogue().size(); catI++) {
-                CatalogueEntry entry = record.getCatalogue().get(catI);
-                lengths += Integer.toString(entry.getLength()) + ", ";
-                offsets += Integer.toString(entry.getOffset()) + ", ";
-                labels += "\"" + entry.getLabel() + "\"" + ", ";
-                entryLength = Integer.toString(entry.getLength());
-                entryOffset = Integer.toString(entry.getOffset());
-                entryLabel = entry.getLabel();
-                db.do_sql_nr("insert into catalogue_entries(entry_id, catalogue_id, entry_length, entry_offset, entry_label) values("+ entryId + ", " + catId + ", " + entryLength + ", " + entryOffset + ", \'" + entryLabel + "\')");
-                entryId += 1;
+                CatalogueEntry entry1 = record.getCatalogue().get(catI);
+                lengths += Integer.toString(entry1.getLength()) + ", ";
+                offsets += Integer.toString(entry1.getOffset()) + ", ";
+                labels += "\"" + entry1.getLabel() + "\"" + ", ";
+                entryLength = Integer.toString(entry1.getLength());
+                entryOffset = Integer.toString(entry1.getOffset());
+                entryLabel = entry1.getLabel();
+                //catalogueEntries.add(new String[]{entryLength, entryOffset, entryLabel});
 
             }
             lengths = lengths.substring(0, lengths.length() - 2);
@@ -158,17 +168,35 @@ public class BinaryFileInteraction {
 
 
 
-            db.do_sql_nr("insert into catalogues(catalogue_id, catalogue_length, entry_lengths, entry_offsets, entry_labels) values("+ catId + ", " + catLength + ", " + lengths + ", " + offsets + ", " + labels + ")");
+            db.do_sql_nr("insert into catalogues(catalogue_id, record_id, catalogue_length, entry_lengths, entry_offsets, entry_labels) values("+ catId + ", " + recId + ", " + catLength + ", " + lengths + ", " + offsets + ", " + labels + ")");
 
-            //for (int catI = entryCount; catI < record.getCatalogue().size() + entryCount; catI++) {
-            //    entryCount++;
-            //    CatalogueEntry entry = record.getCatalogue().get(catI - entryCount + 1);
-            //    entryId = Integer.toString(catI);
-            //    entryLength = Integer.toString(entry.getLength());
-            //    entryOffset = Integer.toString(entry.getOffset());
-            //    entryLabel  = entry.getLabel();
-            //    db.do_sql_nr("insert into catalogue_entries(catalogue_id, entry_id, entry_offset, entry_length, entry_label) values("+ catId + ", " + entryId + ", " + entryOffset + ", " + entryLength + ", " + "'" + entryLabel + "'" + ")");
-            //}
+            for (int catI = 0; catI < record.getCatalogue().size(); catI++) {
+                CatalogueEntry entry2 = record.getCatalogue().get(catI);
+                entryLength = Integer.toString(entry2.getLength());
+                entryOffset = Integer.toString(entry2.getOffset());
+                entryLabel = entry2.getLabel();
+                db.do_sql_nr("insert into catalogue_entries(entry_id, catalogue_id, entry_length, entry_offset, entry_label) values("+ entryId + ", " + catId + ", " + entryLength + ", " + entryOffset + ", \'" + entryLabel + "\')");
+                entryId++;
+
+            }
+        }
+    }
+
+    public void printCatalogueTotals() {
+        dbC db = new dbC("localhost","hch","postgres","postgresql","5432");
+        ResultSet tot = db.do_sql("select count(*) tot, entry_labels from catalogues group by entry_labels order by tot desc");
+        try
+        {
+            while (tot.next())
+            {
+                int total = tot.getInt("tot");
+                String label = tot.getString("entry_labels");
+                System.out.println("total- " + total + "\nlabels- " + label);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
