@@ -39,6 +39,7 @@ public class ISOIEC8211 {
                 catch (StringIndexOutOfBoundsException e)
                 {
                     System.out.println("It's all finished");
+                    binaryFile1.getDDR();
                     binaryFile1.uploadToDb();
                     binaryFile1.printCatalogueTotals();
                     break;

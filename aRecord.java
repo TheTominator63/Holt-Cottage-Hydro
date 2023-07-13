@@ -19,6 +19,15 @@ public class aRecord {
     private String recordData;
     private byte[] recbytes;
     private byte[] catalogueData;
+
+    public int getLeaderAndCatalogueLength() {
+        return leaderAndCatalogueLength;
+    }
+
+    public void setLeaderAndCatalogueLength(int leaderAndCatalogueLength) {
+        this.leaderAndCatalogueLength = leaderAndCatalogueLength;
+    }
+
     private int leaderAndCatalogueLength;
     private ArrayList<CatalogueEntry> catalogue = new ArrayList<>();
     private int catalogueEntryLength;

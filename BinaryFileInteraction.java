@@ -116,8 +116,18 @@ public class BinaryFileInteraction {
         String entryLength;
         String entryOffset;
         String entryLabel;
+        String dataProducer;
+        String usageBand;
         ArrayList<String[]> catalogueEntries = new ArrayList<String[]>();
         int entryCount = 0;
+        if (filename.indexOf("dat/") == -1) {
+            dataProducer = filename.substring(0,2);
+            usageBand = filename.substring(2,3);
+        } else {
+            dataProducer = filename.substring(4,6);
+            usageBand = filename.substring(6,7);
+        }
+
 
         dbC db = new dbC("localhost","hch","postgres","postgresql","5432");
         db.do_sql_nr("delete from catalogue_entries where entry_id >= 0");
@@ -130,7 +140,7 @@ public class BinaryFileInteraction {
             String recData = record.getRecordData();
             recLength = Integer.toString(record.getRecordLength());
             catLength = Integer.toString(record.getCatalogue().size());
-            db.do_sql_nr("insert into records(record_id, record_length, catalogue_id, record_data) values("+ recId + ", " + recLength + ", " + catId + ", \'" + "recData" + "\')");
+            db.do_sql_nr("insert into records(record_id, record_length, catalogue_id, record_data, data_producer, usage_band) values("+ recId + ", " + recLength + ", " + catId + ", \'" + "recData" + "\', \'" + dataProducer + "\', " + usageBand + ")");
             //String[] lengths = new String[record.getCatalogue().size()];
             //String[] offsets = new String[record.getCatalogue().size()];
             //String[] labels  = new String[record.getCatalogue().size()];
@@ -207,6 +217,10 @@ public class BinaryFileInteraction {
         {
             e.printStackTrace();
         }
+    }
+
+    public void getDDR() {
+        DDR theDDR = new DDR(alltheRecords.get(0));
     }
 
 }
